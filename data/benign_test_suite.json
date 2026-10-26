@@ -1,0 +1,42 @@
+[
+  {
+    "trace_id": "BENIGN-001",
+    "caller": "0x1111111111111111111111111111111111111111",
+    "function": "deposit()",
+    "value_wei": 10000000000000000000,
+    "args": [],
+    "expected_status": "SUCCESS",
+    "expected_balance_change": 10000000000000000000,
+    "description": "User Alice deposits 10.0 ETH"
+  },
+  {
+    "trace_id": "BENIGN-002",
+    "caller": "0x2222222222222222222222222222222222222222",
+    "function": "deposit()",
+    "value_wei": 5000000000000000000,
+    "args": [],
+    "expected_status": "SUCCESS",
+    "expected_balance_change": 5000000000000000000,
+    "description": "User Bob deposits 5.0 ETH"
+  },
+  {
+    "trace_id": "BENIGN-003",
+    "caller": "0x1111111111111111111111111111111111111111",
+    "function": "withdraw(uint256)",
+    "value_wei": 0,
+    "args": [4000000000000000000],
+    "expected_status": "SUCCESS",
+    "expected_balance_change": -4000000000000000000,
+    "description": "User Alice legitimately withdraws 4.0 ETH"
+  },
+  {
+    "trace_id": "BENIGN-004",
+    "caller": "0x2222222222222222222222222222222222222222",
+    "function": "withdraw(uint256)",
+    "value_wei": 0,
+    "args": [10000000000000000000],
+    "expected_status": "REVERT",
+    "expected_balance_change": 0,
+    "description": "User Bob attempts overdraft withdrawal of 10.0 ETH (only has 5.0 ETH)"
+  }
+]

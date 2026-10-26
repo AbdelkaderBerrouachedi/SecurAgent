@@ -1,0 +1,59 @@
+{
+  "contract_name": "VulnerableVault",
+  "solidity_version": "0.8.20",
+  "state_variables": [
+    {"name": "balances", "type": "mapping(address => uint256)", "slot": 0, "visibility": "public"},
+    {"name": "totalDeposits", "type": "uint256", "slot": 1, "visibility": "public"},
+    {"name": "locked", "type": "bool", "slot": 2, "visibility": "public"}
+  ],
+  "functions": [
+    {
+      "name": "deposit",
+      "signature": "deposit()",
+      "visibility": "external",
+      "payable": true,
+      "modifies_state": ["balances", "totalDeposits"],
+      "external_calls": []
+    },
+    {
+      "name": "withdraw",
+      "signature": "withdraw(uint256)",
+      "visibility": "external",
+      "payable": false,
+      "parameters": [{"name": "amount", "type": "uint256"}],
+      "modifies_state": ["balances", "totalDeposits"],
+      "external_calls": [
+        {
+          "target": "msg.sender",
+          "call_type": "low_level_call",
+          "value_expression": "amount",
+          "precedes_state_modification": true,
+          "source_line": 26,
+          "state_update_lines": [30, 31]
+        }
+      ]
+    },
+    {
+      "name": "getVaultBalance",
+      "signature": "getVaultBalance()",
+      "visibility": "external",
+      "view": true,
+      "modifies_state": [],
+      "external_calls": []
+    }
+  ],
+  "invariants": [
+    {
+      "id": "INV-SOLVENCY",
+      "formula": "sum_u(balances[u]) <= address(this).balance",
+      "type": "solvency",
+      "description": "Total claimed user balances cannot exceed physical native ETH balance held by contract"
+    },
+    {
+      "id": "INV-MUTEX",
+      "formula": "locked == false",
+      "type": "reentrancy_mutex",
+      "description": "Critical execution section must be protected by reentrancy lock"
+    }
+  ]
+}
